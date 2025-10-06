@@ -1,0 +1,8 @@
+@import 'primeicons/primeicons.css';
+
+/* Your custom styles here */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-family);
+}
