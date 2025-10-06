@@ -64,6 +64,7 @@ import axios from "axios";
 import InputText from 'primevue/inputtext';
 import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
+import './LiveSearchModal.css';
 
 const showFirstModal = ref(false);
 const selectedCountry = ref(null);
@@ -123,108 +124,4 @@ const handleEnter = (event) => {
 };
 </script>
 
-<style scoped>
-/* Container */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-.header {
-  margin-bottom: 2rem;
-  text-align: center;
-}
-.header h1 {
-  font-size: 2.5rem;
-  color: #0ea5e9;
-}
 
-/* Open button */
-.open-btn {
-  background: linear-gradient(90deg, #0ea5e9, #3b82f6);
-  color: white;
-  font-weight: bold;
-  padding: 0.75rem 1.5rem;
-  border-radius: 12px;
-  transition: all 0.3s ease;
-}
-.open-btn:hover {
-  transform: scale(1.05);
-}
-
-/* Dialog header */
-.search-dialog .p-dialog-header {
-  font-weight: bold;
-  font-size: 1.25rem;
-  color: #0ea5e9;
-}
-
-/* Input styling */
-.input-style {
-  padding: 0.75rem;
-  border-radius: 10px;
-  border: 1px solid #cbd5e1;
-  box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
-  width: 100%;
-}
-.input-style:focus {
-  border-color: #0ea5e9;
-  box-shadow: 0 0 8px rgba(14, 165, 233, 0.4);
-}
-
-/* Input wrapper */
-.input-wrapper {
-  position: relative;
-}
-
-/* Scrollable Results Box */
-.results-container {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  max-height: 250px;
-  overflow-y: auto;
-  margin-top: 0.5rem;      /* space below input */
-  padding: 0.5rem;
-  background: #ffffff;
-  border: 1px solid #cbd5e1;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-  z-index: 50;
-}
-.result-btn {
-  justify-content: flex-start;
-  background: #f1f5f9;
-  border-radius: 10px;
-  border: none;
-  padding: 0.5rem 1rem;
-  width: 100%;
-  transition: all 0.2s;
-}
-.result-btn:hover {
-  background: #e0f2fe;
-  transform: translateX(2px);
-}
-
-/* Selected country card */
-/* Selected country card spacing */
-.selected-country-card {
-  background: #e0f2fe;
-  padding: 1rem;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 0.75rem; /* <-- add this margin */
-  margin-bottom: 1rem;
-}
-
-.country-name { font-weight: bold; font-size: 1.25rem; color: #0ea5e9; }
-.country-code { color: #1e293b; font-size: 0.9rem; }
-
-/* Footer buttons */
-.footer-btn {
-  border-radius: 10px;
-  min-width: 100px;
-}
-</style>
