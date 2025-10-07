@@ -15,21 +15,21 @@
 
         <!-- Input + Results wrapper -->
         <div class="input-wrapper mb-4">
-          <!-- Selected Country Input with Flag -->
-          <InputText
-            :value="selectedCountry ? selectedCountry.name : ''"
-            @click="toggleList"
-            placeholder="Click to select country..."
-            class="w-full input-style"
-            readonly
-          >
-            <template #prepend>
-              <span v-if="selectedCountry" :class="`fi fi-${selectedCountry.code.toLowerCase()} mr-2`"></span>
-            </template>
-          </InputText>
+          <!-- Display Selected Country Input with Flag -->
+          <div class="selected-country-wrapper">
+            <span v-if="selectedCountry" :class="`fi fi-${selectedCountry.code.toLowerCase()} selected-flag`"></span>
+            <InputText
+              :value="selectedCountry ? selectedCountry.name : ''"
+              @click="toggleList"
+              placeholder="Click to select country..."
+              class="w-full input-style"
+              readonly
+            />
+          </div>
 
-          <!-- Dropdown List -->
+          <!-- Dropdown List with Search Inside -->
           <div v-if="showList" class="results-container" @mousedown.prevent>
+            <!-- Search Input Inside List -->
             <div class="search-input-wrapper-inside">
               <i class="pi pi-search search-icon-inside"></i>
               <InputText
@@ -46,6 +46,7 @@
               <i v-if="searchQuery" @click="clearSearchInput" class="pi pi-times clear-icon-inside"></i>
             </div>
 
+            <!-- Scrollable Country List -->
             <div class="country-list">
               <Button
                 v-for="(country, index) in filteredCountries"
@@ -90,9 +91,10 @@ const searchInput = ref(null);
 let searchTimeout = null;
 let currentQuery = '';
 
-// Search countries with debounce
+// Debounced search
 const searchCountries = () => {
   if (searchTimeout) clearTimeout(searchTimeout);
+
   const query = searchQuery.value.trim();
   currentQuery = query;
 
@@ -103,7 +105,11 @@ const searchCountries = () => {
         const response = await axios.get('/countries');
         filteredCountries.value = response.data;
         highlightedIndex.value = 0;
-      } finally { loading.value = false; }
+      } catch (error) {
+        filteredCountries.value = [];
+      } finally {
+        loading.value = false;
+      }
     }, 150);
     return;
   }
@@ -113,58 +119,99 @@ const searchCountries = () => {
     try {
       const response = await axios.get('/countries', { params: { search: query } });
       if (query === currentQuery) {
-        filteredCountries.value = response.data.filter(c => c.name.toLowerCase().startsWith(query.toLowerCase()));
+        filteredCountries.value = response.data.filter(c =>
+          c.name.toLowerCase().startsWith(query.toLowerCase())
+        );
         highlightedIndex.value = 0;
       }
-    } finally { loading.value = false; }
+    } catch (error) {
+      filteredCountries.value = [];
+    } finally {
+      loading.value = false;
+    }
   }, 150);
 };
 
-// Toggle dropdown and focus selected
+// Click outside to close dropdown
+const handleClickOutside = (event) => {
+  const dropdown = document.querySelector('.results-container');
+  const mainInput = document.querySelector('.input-style');
+  
+  if (dropdown && !dropdown.contains(event.target) && !mainInput.contains(event.target)) {
+    showList.value = false;
+    searchQuery.value = '';
+  }
+};
+
+// Toggle list
 const toggleList = async () => {
-  if (showList.value) { showList.value = false; return; }
+  if (showList.value) {
+    showList.value = false;
+    return;
+  }
+
   loading.value = true;
   try {
     const response = await axios.get('/countries');
     filteredCountries.value = response.data;
-    showList.value = true;
-    searchQuery.value = '';
     highlightedIndex.value = selectedCountry.value
       ? filteredCountries.value.findIndex(c => c.code === selectedCountry.value.code)
       : 0;
-
+    showList.value = true;
+    searchQuery.value = '';
     await nextTick();
     if (searchInput.value) searchInput.value.$el.focus();
-  } finally { loading.value = false; }
+  } catch (error) {}
+  finally { loading.value = false; }
 };
 
-const closeList = () => { showList.value = false; searchQuery.value = ''; };
-const clearSearchInput = () => { searchQuery.value = ''; searchCountries(); };
-const handleArrowDown = () => { highlightedIndex.value = (highlightedIndex.value + 1) % filteredCountries.value.length; scrollToHighlighted(); };
-const handleArrowUp = () => { highlightedIndex.value = highlightedIndex.value === 0 ? filteredCountries.value.length - 1 : highlightedIndex.value - 1; scrollToHighlighted(); };
-const handleEnter = () => { if (filteredCountries.value.length > 0) selectCountry(filteredCountries.value[highlightedIndex.value]); };
+const closeList = () => {
+  showList.value = false;
+  searchQuery.value = '';
+};
 
+const clearSearchInput = () => {
+  searchQuery.value = '';
+  searchCountries();
+};
+
+// Arrow navigation
+const handleArrowDown = () => {
+  if (filteredCountries.value.length > 0) {
+    highlightedIndex.value = (highlightedIndex.value + 1) % filteredCountries.value.length;
+    scrollToHighlighted();
+  }
+};
+const handleArrowUp = () => {
+  if (filteredCountries.value.length > 0) {
+    highlightedIndex.value = highlightedIndex.value === 0
+      ? filteredCountries.value.length - 1
+      : highlightedIndex.value - 1;
+    scrollToHighlighted();
+  }
+};
 const scrollToHighlighted = () => {
   setTimeout(() => {
-    const countryList = document.querySelector('.country-list');
-    const highlightedButton = document.querySelector('.result-btn.highlighted');
-    if (countryList && highlightedButton) {
-      const containerRect = countryList.getBoundingClientRect();
-      const buttonRect = highlightedButton.getBoundingClientRect();
-      if (buttonRect.bottom > containerRect.bottom || buttonRect.top < containerRect.top) {
-        highlightedButton.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    const list = document.querySelector('.country-list');
+    const highlighted = document.querySelector('.result-btn.highlighted');
+    if (list && highlighted) {
+      const listRect = list.getBoundingClientRect();
+      const buttonRect = highlighted.getBoundingClientRect();
+      if (buttonRect.bottom > listRect.bottom || buttonRect.top < listRect.top) {
+        highlighted.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
       }
     }
   }, 0);
 };
-
+const handleEnter = () => {
+  if (filteredCountries.value.length > 0) selectCountry(filteredCountries.value[highlightedIndex.value]);
+};
 const selectCountry = (country) => {
   selectedCountry.value = country;
   showList.value = false;
   searchQuery.value = '';
-  highlightedIndex.value = 0;
+  highlightedIndex.value = filteredCountries.value.findIndex(c => c.code === country.code);
 };
-
 const clearSearch = () => {
   selectedCountry.value = null;
   searchQuery.value = '';
@@ -173,16 +220,11 @@ const clearSearch = () => {
   showList.value = false;
 };
 
-// Click outside closes list
-const handleClickOutside = (event) => {
-  const dropdown = document.querySelector('.results-container');
-  const mainInput = document.querySelector('.input-style');
-  if (dropdown && !dropdown.contains(event.target) && !mainInput.contains(event.target)) {
-    showList.value = false;
-    searchQuery.value = '';
-  }
-};
-
-onMounted(() => { document.addEventListener('click', handleClickOutside); });
-onUnmounted(() => { document.removeEventListener('click', handleClickOutside); });
+// Click outside listener
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
 </script>
