@@ -220,6 +220,7 @@ const clearSearch = () => {
   showList.value = false;
 };
 
+
 // Click outside listener
 onMounted(() => {
   document.addEventListener('click', handleClickOutside);
