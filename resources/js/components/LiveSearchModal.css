@@ -3,127 +3,172 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem;
-  }
-  
-  .header {
+}
+
+.header {
     margin-bottom: 2rem;
     text-align: center;
-  }
-  
-  .header h1 {
+}
+
+.header h1 {
     font-size: 2.5rem !important;
     color: #0ea5e9 !important;
-  }
-  
-  /* Open Modal button */
-  .open-btn.p-button.p-component {
+}
+
+/* Open Modal button */
+.open-btn.p-button.p-component {
     background: linear-gradient(90deg, #0ea5e9, #3b82f6) !important;
     color: white !important;
     font-weight: bold !important;
     padding: 0.75rem 1.5rem !important;
     border-radius: 12px !important;
     transition: all 0.3s ease !important;
-  }
-  
-  .open-btn.p-button.p-component:hover {
+}
+
+.open-btn.p-button.p-component:hover {
     filter: brightness(1.1) !important;
     transform: scale(1.05) !important;
-  }
-  
-  /* Dialog header */
-  .search-dialog .p-dialog-header {
+}
+
+/* Dialog header */
+.search-dialog .p-dialog-header {
     font-weight: bold !important;
     font-size: 1.25rem !important;
     color: #0ea5e9 !important;
     background: none !important;
-  }
-  
-  /* Input styling */
-  .input-style {
-    padding: 0.75rem !important;
+}
+
+/* Selected Country Input Styling */
+.input-style {
+    padding: 0.75rem 0.75rem 0.75rem 2.5rem !important; /* space for flag */
     border-radius: 10px !important;
     border: 1px solid #0ea5e9 !important;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05) !important;
     width: 100% !important;
-  }
-  
-  .input-style:focus {
+    cursor: pointer !important;
+    background-color: #000 !important;
+    color: white !important;
+    position: relative !important;
+}
+
+/* Flag inside input */
+.input-style .fi {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1.25rem;
+    height: 1rem;
+}
+
+/* Input inside the dropdown list */
+.search-input-inside {
+    padding: 0.5rem 2.5rem !important;
+    border-radius: 8px !important;
+    border: 1px solid #cbd5e1 !important;
+    width: 100% !important;
+    font-size: 0.95rem !important;
+}
+
+.search-input-inside:focus {
     border-color: #0ea5e9 !important;
-    box-shadow: 0 0 8px rgba(14, 165, 233, 0.4) !important;
+    box-shadow: 0 0 4px rgba(14, 165, 233, 0.3) !important;
     outline: none !important;
-  }
-  
-  /* Scrollable Results Box */
-  .results-container {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 0.5rem !important;
-    max-height: 250px !important;
-    overflow-y: auto !important;
+}
+
+/* Dropdown results container */
+.results-container {
+    display: flex;
+    flex-direction: column;
     margin-top: 0.5rem !important;
-    padding: 0.5rem !important;
     background: #ffffff !important;
-    border: 1px solid #0ea5e9 !important; /* light blue border */
+    border: 1px solid #0ea5e9 !important;
     border-radius: 10px !important;
     box-shadow: 0 4px 8px rgba(0,0,0,0.05) !important;
-    z-index: 50 !important;
-  }
-  
-  /* Search result buttons */
-  .results-container .p-button.p-component {
+    z-index: 50;
+    overflow: hidden !important;
+}
+
+.search-input-wrapper-inside {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 0.75rem !important;
+    background: #f8fafc !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.search-icon-inside {
+    position: absolute !important;
+    left: 1.5rem !important;
+    color: #0ea5e9 !important;
+    font-size: 1rem !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
+}
+
+.clear-icon-inside {
+    position: absolute !important;
+    right: 1.5rem !important;
+    color: #94a3b8 !important;
+    font-size: 1rem !important;
+    cursor: pointer !important;
+    z-index: 1 !important;
+    transition: color 0.2s !important;
+}
+
+.clear-icon-inside:hover {
+    color: #0ea5e9 !important;
+}
+
+/* Country list */
+.country-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.5rem !important;
+    max-height: 300px !important;
+    overflow-y: auto !important;
+}
+
+/* Country buttons */
+.country-list .p-button.p-component {
     justify-content: flex-start !important;
-    background-color: #f1f5f9 !important; /* default light background */
+    background-color: #f1f5f9 !important;
     border-radius: 10px !important;
     border: none !important;
     padding: 0.5rem 1rem !important;
     width: 100% !important;
     transition: all 0.2s !important;
     cursor: pointer !important;
-    color: #000 !important;
-  }
-  
-  .results-container .p-button.p-component:hover {
-    background-color: #bfdbfe !important; /* light blue hover */
-    transform: translateX(2px) !important;
-  }
-  
-  .results-container .p-button.p-component.selected {
-    background-color: #3b82f6 !important; /* selected light blue */
-    color: white !important;
-  }
-  
-  /* Selected country card */
-  .selected-country-card {
-    background: #e0f2fe !important;
-    padding: 1rem !important;
-    border-radius: 12px !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 1rem !important;
-    margin-top: 0.75rem !important;
-    margin-bottom: 1rem !important;
-  }
-  
-  .country-name {
-    font-weight: bold !important;
-    font-size: 1.25rem !important;
-    color: #0ea5e9 !important;
-  }
-  
-  .country-code {
     color: #1e293b !important;
-    font-size: 0.9rem !important;
-  }
-  
-  /* Footer buttons */
-  .footer-btn.p-button.p-component {
+}
+
+.country-list .p-button.p-component:hover {
+    background-color: #bfdbfe !important;
+    transform: translateX(2px) !important;
+}
+
+/* Highlighted state (keyboard navigation) */
+.country-list .p-button.p-component.highlighted {
+    background-color: #60a5fa !important;
+    color: white !important;
+    transform: translateX(2px) !important;
+}
+
+/* Selected state */
+.country-list .p-button.p-component.selected {
+    background-color: #3b82f6 !important;
+    color: white !important;
+}
+
+/* Footer buttons */
+.footer-btn.p-button.p-component {
     border-radius: 10px !important;
     min-width: 100px !important;
     background-color: #0ea5e9 !important;
     color: white !important;
-  }
-  
-  .footer-btn.p-button.p-component:hover {
+}
+
+.footer-btn.p-button.p-component:hover {
     background-color: #3b82f6 !important;
-  }
-  
+}

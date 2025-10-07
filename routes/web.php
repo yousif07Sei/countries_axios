@@ -8,8 +8,6 @@ Route::get('/', function () {
 });
 Route::get('/countries', function (Request $request) {
     $search = $request->input('search', '');
-    $page = $request->input('page', 1);
-    $perPage = 10;
     
     // All countries
     $allCountries = [
@@ -85,20 +83,15 @@ Route::get('/countries', function (Request $request) {
     ];
     
     // Filter by search term
-    $filtered = $allCountries;
     if (!empty($search)) {
         $filtered = array_filter($allCountries, function($country) use ($search) {
             return stripos($country['name'], $search) !== false;
         });
-        $filtered = array_values($filtered); // Re-index array
+        return response()->json(array_values($filtered));
     }
     
-    // Paginate results
-    $total = count($filtered);
-    $offset = ($page - 1) * $perPage;
-    $paginatedResults = array_slice($filtered, $offset, $perPage);
-    
-    return response()->json($paginatedResults);
+    // Return all countries if no search term
+    return response()->json($allCountries);
 });
 Route::get('/{any}', function () {
     return view('app');
