@@ -8,6 +8,7 @@
     <!-- Country Select -->
     <div class="w-full max-w-full">
       <Select
+        :key="selectKey"
         v-model="selectedCountry"
         :options="filteredCountries"
         filter
@@ -16,6 +17,7 @@
         @filter="searchCountries"
         @show="handleDropdownShow"
         @hide="handleDropdownHide"
+        @keydown="handleKeyDown"
         class="country-select"
         emptyMessage="Please enter 1 or more characters"
         :filterFocus="true"
@@ -49,8 +51,14 @@
             class: '!py-2.5 !px-4 !text-sm !border-b last:!border-b-0',
             style: 'color: #374151 !important; background: white !important; border-color: #f3f4f6 !important; border-radius: 0 !important;'
           },
+          option: {
+            style: ({ context }) => ({
+              background: context.focused ? 'var(--p-primary-200) !important' : 'white !important',
+              color: context.focused ? 'var(--p-primary-800) !important' : '#374151 !important'
+            })
+          },
           itemHighlight: {
-            style: 'background: var(--p-primary-100) !important; color: var(--p-primary-700) !important;'
+            style: 'background: var(--p-primary-200) !important; color: var(--p-primary-800) !important;'
           },
           itemSelected: {
             style: 'background: var(--p-primary-500) !important; color: white !important;'
@@ -73,8 +81,8 @@
         }"
       >
         <template #value="slotProps">
-          <div v-if="slotProps.value" class="flex items-center">
-            <span :class="`fi fi-${slotProps.value.code.toLowerCase()} mr-3 text-base`"></span>
+          <div v-if="slotProps.value" class="flex items-center gap-3">
+            <span :class="`fi fi-${slotProps.value.code.toLowerCase()} text-base`"></span>
             <div class="text-sm" style="color: #374151 !important;">{{ slotProps.value.name }}</div>
           </div>
           <span v-else class="text-sm" style="color: #9ca3af !important;">
@@ -82,8 +90,8 @@
           </span>
         </template>
         <template #option="slotProps">
-          <div class="flex items-center" style="color: #374151 !important;">
-            <span :class="`fi fi-${slotProps.option.code.toLowerCase()} mr-3 text-base`"></span>
+          <div class="flex items-center gap-3" style="color: #374151 !important;">
+            <span :class="`fi fi-${slotProps.option.code.toLowerCase()} text-base`"></span>
             <div class="text-sm" style="color: #374151 !important;">{{ slotProps.option.name }}</div>
           </div>
         </template>
@@ -107,6 +115,7 @@ const allCountries = ref([]);
 const isDropdownOpen = ref(false);
 const searchQuery = ref("");
 const highlightedIndex = ref(0);
+const selectKey = ref(0); // Key to force component re-render
 
 // ============ Fetch Countries ============
 const fetchCountries = async () => {
@@ -143,12 +152,28 @@ const handleDropdownShow = async () => {
   }
 };
 
+// ============ Handle Keyboard Events ============
+const handleKeyDown = (event) => {
+  // If Enter is pressed and dropdown is closed, open it
+  if (event.key === 'Enter' && !isDropdownOpen.value) {
+    event.preventDefault();
+    // Trigger the dropdown to open
+    const trigger = document.querySelector('.p-select-dropdown');
+    if (trigger) {
+      trigger.click();
+    }
+  }
+};
+
 // ============ Handle Dropdown Hide ============
 const handleDropdownHide = () => {
   isDropdownOpen.value = false;
-  // Clear search when dropdown closes
-  searchQuery.value = "";
-  filteredCountries.value = [];
+  // Clear search input and force component re-render to reset filter
+  setTimeout(() => {
+    searchQuery.value = "";
+    filteredCountries.value = [];
+    selectKey.value++; // Force component to re-render and clear internal filter state
+  }, 100);
 };
 
 // ============ Search Countries ============
@@ -156,9 +181,23 @@ const searchCountries = async (event) => {
   searchQuery.value = event.value;
   await fetchCountries();
 
-  // Update highlighted index to first item, but don't change selected country
-  if (searchQuery.value && searchQuery.value.length > 0 && filteredCountries.value.length > 0) {
-    highlightedIndex.value = 0;
+  // Highlight and focus first item in dropdown so Enter key works
+  await nextTick();
+  if (filteredCountries.value.length > 0) {
+    // Simulate arrow down key press to focus first item
+    await nextTick();
+    const filterInput = document.querySelector('.p-select-filter');
+    if (filterInput) {
+      // Dispatch arrow down event to trigger PrimeVue's internal focus logic
+      const arrowDownEvent = new KeyboardEvent('keydown', {
+        key: 'ArrowDown',
+        code: 'ArrowDown',
+        keyCode: 40,
+        bubbles: true,
+        cancelable: true
+      });
+      filterInput.dispatchEvent(arrowDownEvent);
+    }
   }
 };
 
@@ -204,6 +243,7 @@ const handleArrowUp = () => {
         ? filteredCountries.value.length - 1
         : highlightedIndex.value - 1;
     scrollToHighlighted();
+    
   }
 };
 
