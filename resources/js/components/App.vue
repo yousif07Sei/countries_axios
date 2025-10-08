@@ -1,201 +1,181 @@
 <template>
-  <div class="max-w-[1200px] mx-auto p-4 sm:p-6 md:p-8 min-h-screen flex flex-col items-center bg-gray-50">
+  <div class="max-w-[1400px] mx-auto p-4 sm:p-6 md:p-8 min-h-screen" style="background: white !important;">
     <!-- Header -->
-    <header class="mb-6 sm:mb-8 text-center px-4">
-      <h1 class="!text-2xl sm:!text-3xl md:!text-[2.5rem] !font-bold !text-[#0ea5e9]">Live Search Countries</h1>
+    <header class="mb-6 sm:mb-8">
+      <h1 class="text-2xl sm:text-3xl font-semibold" style="color: #374151 !important;">Country Selector</h1>
     </header>
 
-    <!-- Open Modal Button -->
-    <div class="mb-6 px-4">
-      <Button
-        label="Open Search Modal"
-        @click="showFirstModal = true"
+    <!-- Country Select -->
+    <div class="w-full max-w-full">
+      <Select
+        v-model="selectedCountry"
+        :options="filteredCountries"
+        filter
+        optionLabel="name"
+        placeholder="Search for a country"
+        @filter="searchCountries"
+        @show="handleDropdownShow"
+        @hide="handleDropdownHide"
+        class="country-select"
+        emptyMessage="Please enter 1 or more characters"
+        :filterFocus="true"
         :pt="{
-          root: { class: '!bg-gradient-to-r !from-[#0ea5e9] !to-[#3b82f6] !text-white !font-bold !px-4 sm:!px-6 !py-2.5 sm:!py-3 !rounded-[12px] !shadow hover:!brightness-110 hover:!scale-105 !transition-all !duration-300 !text-sm sm:!text-base' }
+          root: { 
+            class: '!w-full !bg-white !relative',
+            style: isDropdownOpen 
+              ? 'border: 1px solid #d1d5db !important; border-bottom: 1px solid #d1d5db !important; border-radius: 6px 6px 0 0 !important; background: white !important; z-index: 1001 !important; position: relative !important;'
+              : 'border: 1px solid #d1d5db !important; border-radius: 6px !important; background: white !important;'
+          },
+          input: { 
+            class: '!py-2.5 !px-3 !text-sm',
+            style: 'color: #374151 !important; background: white !important;'
+          },
+          inputFocus: {
+            style: 'border-color: #3b82f6 !important; box-shadow: 0 0 0 1px #3b82f6 !important; outline: none !important;'
+          },
+          trigger: { 
+            class: '!w-10',
+            style: 'color: #6b7280 !important; background: white !important;'
+          },
+          panel: {
+            class: '!mt-0',
+            style: 'border: 1px solid #d1d5db !important; border-top: 1px solid #d1d5db !important; border-radius: 0 0 6px 6px !important; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important; background: white !important; z-index: 1000 !important; margin-top: -1px !important; position: absolute !important; top: 100% !important; left: 0 !important; right: 0 !important;'
+          },
+          list: { 
+            class: '!p-0',
+            style: 'background: white !important;'
+          },
+          item: {
+            class: '!py-2.5 !px-4 !text-sm !border-b last:!border-b-0',
+            style: 'color: #374151 !important; background: white !important; border-color: #f3f4f6 !important; border-radius: 0 !important;'
+          },
+          itemHighlight: {
+            style: 'background: var(--p-primary-100) !important; color: var(--p-primary-700) !important;'
+          },
+          itemSelected: {
+            style: 'background: var(--p-primary-500) !important; color: white !important;'
+          },
+          filterContainer: { 
+            class: '!p-3 !border-b',
+            style: 'background: white !important; border-color: #e5e7eb !important;'
+          },
+          filterInput: { 
+            class: '!w-full !py-2 !px-3 !text-sm',
+            style: 'border: 1px solid #d1d5db !important; border-radius: 6px !important; background: white !important; color: #374151 !important;'
+          },
+          filterInputFocus: {
+            style: 'border-color: #3b82f6 !important; box-shadow: 0 0 0 1px #3b82f6 !important; outline: none !important;'
+          },
+          emptyMessage: { 
+            class: '!py-3 !px-4 !text-sm',
+            style: 'color: #6b7280 !important; background: white !important;'
+          }
         }"
-      />
-    </div>
-
-    <!-- Search Modal -->
-    <Dialog
-      v-model:visible="showFirstModal"
-      header="Search Country"
-      :style="{ width: '95vw', maxWidth: '500px' }"
-      :modal="true"
-      :pt="{
-        header: { class: '!font-bold !text-lg sm:!text-[1.25rem] !text-[#0ea5e9] !bg-transparent' },
-        content: { class: '!p-4 sm:!p-6' },
-        root: { class: '!mx-4' }
-      }"
-      class="!rounded-[10px]"
-    >
-      <p class="mb-3 sm:mb-4 text-sm sm:text-base text-gray-700">Click to select a country:</p>
-
-      <!-- Input + Dropdown -->
-      <div class="relative w-full" :style="{ marginBottom: showList ? '380px' : '0px', transition: 'margin-bottom 0.2s ease' }">
-        <!-- Selected Country Input -->
-        <div class="relative w-full mb-2">
-          <span
-            v-if="selectedCountry"
-            :class="`fi fi-${selectedCountry.code.toLowerCase()}`"
-            style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; z-index: 1;"
-          ></span>
-          <InputText
-            :value="selectedCountry ? selectedCountry.name : ''"
-            @click="toggleList"
-            placeholder="Click to select country..."
-            readonly
-            class="input-style"
-            :pt="{
-              root: { class: '!w-full !pr-3 !py-2.5 sm:!py-3 !rounded-[10px] !border !border-[#0ea5e9] !bg-black !text-white !shadow-inner !cursor-pointer placeholder:!text-white/60 focus:!outline-none !text-sm sm:!text-base' }
-            }"
-            style="padding-left: 48px !important;"
-          />
-        </div>
-
-        <!-- Dropdown List Container -->
-        <div
-          v-if="showList"
-          style="position: absolute; z-index: 9999; width: 100%; top: 100%; margin-top: 4px;"
-          @mousedown.prevent
-        >
-          <div style="background: black; border: 1px solid #0ea5e9; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; max-height: 400px;">
-            
-            <!-- Search Input - Fixed at top -->
-            <div style="padding: 10px; background: black; border-bottom: 1px solid #0ea5e9; border-radius: 10px 10px 0 0; flex-shrink: 0;">
-              <div style="position: relative; display: flex; align-items: center;">
-                <i class="pi pi-search" style="position: absolute; left: 12px; color: #0ea5e9; font-size: 14px; pointer-events: none;"></i>
-                <InputText
-                  v-model="searchQuery"
-                  @input="searchCountries"
-                  @keydown.enter.prevent="handleEnter"
-                  @keydown.down.prevent="handleArrowDown"
-                  @keydown.up.prevent="handleArrowUp"
-                  @keydown.escape="closeList"
-                  placeholder="Search countries..."
-                  ref="searchInput"
-                  :pt="{
-                    root: { class: '!w-full !py-2 !rounded-[8px] !border !border-[#0ea5e9] !text-sm focus:!border-[#0ea5e9] focus:!shadow-[0_0_4px_rgba(14,165,233,0.3)] focus:!outline-none !bg-black !text-white placeholder:!text-gray-400' }
-                  }"
-                  style="padding-left: 36px !important; padding-right: 36px !important;"
-                />
-                <i
-                  v-if="searchQuery"
-                  @click="clearSearchInput"
-                  class="pi pi-times"
-                  style="position: absolute; right: 12px; color: #94a3b8; font-size: 14px; cursor: pointer; transition: color 0.2s;"
-                  @mouseenter="$event.target.style.color = '#0ea5e9'"
-                  @mouseleave="$event.target.style.color = '#94a3b8'"
-                ></i>
-              </div>
-            </div>
-
-            <!-- Scrollable Country List ONLY -->
-            <div style="display: flex; flex-direction: column; gap: 6px; padding: 8px; overflow-y: auto; max-height: 300px; overflow-x: hidden; background: black;">
-              <Button
-                v-for="(country, index) in filteredCountries"
-                :key="country.code"
-                @click="selectCountry(country)"
-                @mouseenter="highlightedIndex = index"
-                :class="[
-                  'country-list-item',
-                  { 'highlighted': index === highlightedIndex }
-                ]"
-                :pt="{
-                  root: {
-                    class: [
-                      '!w-full !flex !items-center !text-left !rounded-none !transition-all !duration-200 !justify-start !border-none !text-base sm:!text-lg',
-                      {
-                        '!bg-[#60a5fa] !text-white !translate-x-[2px]': index === highlightedIndex,
-                        '!bg-[#3b82f6] !text-white': selectedCountry && selectedCountry.code === country.code,
-                        '!bg-[#1a1a1a] !text-white hover:!bg-[#2a2a2a] hover:!text-white': !(index === highlightedIndex || (selectedCountry && selectedCountry.code === country.code))
-                      }
-                    ]
-                  }
-                }"
-                style="padding: 10px 12px !important;"
-              >
-                <span :class="`fi fi-${country.code.toLowerCase()}`" style="font-size: 18px; margin-right: 12px;"></span>
-                <span style="font-size: 16px; color: white;">{{ country.name }}</span>
-              </Button>
-            </div>
+      >
+        <template #value="slotProps">
+          <div v-if="slotProps.value" class="flex items-center">
+            <span :class="`fi fi-${slotProps.value.code.toLowerCase()} mr-3 text-base`"></span>
+            <div class="text-sm" style="color: #374151 !important;">{{ slotProps.value.name }}</div>
           </div>
-        </div>
-      </div>
-
-      <!-- Footer -->
-      <template #footer>
-        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 12px;" class="sm:!gap-4 sm:!mt-4">
-          <Button
-            label="Clear"
-            @click="clearSearch"
-            :pt="{
-              root: { class: '!bg-[#0ea5e9] !text-white !rounded-[10px] !min-w-[80px] sm:!min-w-[100px] hover:!bg-[#3b82f6] !transition-colors !text-sm sm:!text-base' }
-            }"
-          />
-          <Button
-            label="Close"
-            @click="showFirstModal = false"
-            :pt="{
-              root: { class: '!bg-[#0ea5e9] !text-white !rounded-[10px] !min-w-[80px] sm:!min-w-[100px] hover:!bg-[#3b82f6] !transition-colors !text-sm sm:!text-base' }
-            }"
-          />
-        </div>
-      </template>
-    </Dialog>
+          <span v-else class="text-sm" style="color: #9ca3af !important;">
+            {{ slotProps.placeholder }}
+          </span>
+        </template>
+        <template #option="slotProps">
+          <div class="flex items-center" style="color: #374151 !important;">
+            <span :class="`fi fi-${slotProps.option.code.toLowerCase()} mr-3 text-base`"></span>
+            <div class="text-sm" style="color: #374151 !important;">{{ slotProps.option.name }}</div>
+          </div>
+        </template>
+        <template #filtericon>
+          <i class="pi pi-search text-xs" style="color: #9ca3af !important;"></i>
+        </template>
+      </Select>
+    </div>
   </div>
 </template>
-
 
 <script setup>
 import { ref, nextTick } from "vue";
 import axios from "axios";
-import Dialog from "primevue/dialog";
-import Button from "primevue/button";
-import InputText from "primevue/inputtext";
+import Select from "primevue/select";
 
-const showFirstModal = ref(false);
-const showList = ref(false);
+// ============ Reactive State ============
 const selectedCountry = ref(null);
 const filteredCountries = ref([]);
+const allCountries = ref([]);
+const isDropdownOpen = ref(false);
 const searchQuery = ref("");
 const highlightedIndex = ref(0);
-const searchInput = ref(null);
 
-const toggleList = async () => {
-  showList.value = !showList.value;
-  if (showList.value) {
-    await fetchCountries();
-    await nextTick();
-    if (searchInput.value) searchInput.value.$el.focus();
-  }
-};
-
+// ============ Fetch Countries ============
 const fetchCountries = async () => {
   try {
     const response = await axios.get("/countries");
-    
+    allCountries.value = response.data;
+
     // Filter on frontend to match countries that START WITH the search query
-    if (searchQuery.value) {
+    if (searchQuery.value && searchQuery.value.length > 0) {
       filteredCountries.value = response.data.filter(country =>
         country.name.toLowerCase().startsWith(searchQuery.value.toLowerCase())
       );
     } else {
-      filteredCountries.value = response.data;
+      // Don't show any countries if search is empty
+      filteredCountries.value = [];
     }
-    
+
     highlightedIndex.value = 0;
   } catch (err) {
+    console.error("Error fetching countries:", err);
     filteredCountries.value = [];
   }
 };
 
+// ============ Handle Dropdown Show ============
+const handleDropdownShow = async () => {
+  isDropdownOpen.value = true;
+
+  // Focus the filter input after dropdown opens
+  await nextTick();
+  const filterInput = document.querySelector('.p-select-filter');
+  if (filterInput) {
+    filterInput.focus();
+  }
+};
+
+// ============ Handle Dropdown Hide ============
+const handleDropdownHide = () => {
+  isDropdownOpen.value = false;
+  // Clear search when dropdown closes
+  searchQuery.value = "";
+  filteredCountries.value = [];
+};
+
+// ============ Search Countries ============
+const searchCountries = async (event) => {
+  searchQuery.value = event.value;
+  await fetchCountries();
+
+  // Update highlighted index to first item, but don't change selected country
+  if (searchQuery.value && searchQuery.value.length > 0 && filteredCountries.value.length > 0) {
+    highlightedIndex.value = 0;
+  }
+};
+
+// ============ Select Country ============
 const selectCountry = (country) => {
   selectedCountry.value = country;
-  showList.value = false;
+  isDropdownOpen.value = false;
   highlightedIndex.value = filteredCountries.value.findIndex(
     (c) => c.code === country.code
   );
+};
+
+// ============ Clear Functions ============
+const clearSearch = () => {
+  selectedCountry.value = null;
+  searchQuery.value = "";
+  filteredCountries.value = [];
 };
 
 const clearSearchInput = () => {
@@ -203,16 +183,7 @@ const clearSearchInput = () => {
   fetchCountries();
 };
 
-const clearSearch = () => {
-  selectedCountry.value = null;
-  searchQuery.value = "";
-  filteredCountries.value = [];
-};
-
-const closeList = () => {
-  showList.value = false;
-};
-
+// ============ Keyboard Handlers ============
 const handleEnter = () => {
   if (filteredCountries.value.length > 0)
     selectCountry(filteredCountries.value[highlightedIndex.value]);
@@ -248,7 +219,6 @@ const scrollToHighlighted = () => {
   });
 };
 
-const searchCountries = () => {
-  fetchCountries();
-};
+// Fetch countries when component mounts
+fetchCountries();
 </script>

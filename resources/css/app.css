@@ -1,5 +1,5 @@
 /* Import PrimeVue / PrimeIcons first */
-@import 'primeicons/primeicons.css';
+
 
 /* Then Tailwind */
 @tailwind base;
