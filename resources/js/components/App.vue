@@ -59,10 +59,10 @@
           style="position: absolute; z-index: 9999; width: 100%; top: 100%; margin-top: 4px;"
           @mousedown.prevent
         >
-          <div style="background: white; border: 1px solid #0ea5e9; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; max-height: 400px;">
+          <div style="background: black; border: 1px solid #0ea5e9; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; max-height: 400px;">
             
             <!-- Search Input - Fixed at top -->
-            <div style="padding: 10px; background: white; border-bottom: 1px solid #e2e8f0; border-radius: 10px 10px 0 0; flex-shrink: 0;">
+            <div style="padding: 10px; background: black; border-bottom: 1px solid #0ea5e9; border-radius: 10px 10px 0 0; flex-shrink: 0;">
               <div style="position: relative; display: flex; align-items: center;">
                 <i class="pi pi-search" style="position: absolute; left: 12px; color: #0ea5e9; font-size: 14px; pointer-events: none;"></i>
                 <InputText
@@ -75,7 +75,7 @@
                   placeholder="Search countries..."
                   ref="searchInput"
                   :pt="{
-                    root: { class: '!w-full !py-2 !rounded-[8px] !border !border-[#cbd5e1] !text-sm focus:!border-[#0ea5e9] focus:!shadow-[0_0_4px_rgba(14,165,233,0.3)] focus:!outline-none !bg-white !text-black placeholder:!text-gray-400' }
+                    root: { class: '!w-full !py-2 !rounded-[8px] !border !border-[#0ea5e9] !text-sm focus:!border-[#0ea5e9] focus:!shadow-[0_0_4px_rgba(14,165,233,0.3)] focus:!outline-none !bg-black !text-white placeholder:!text-gray-400' }
                   }"
                   style="padding-left: 36px !important; padding-right: 36px !important;"
                 />
@@ -91,7 +91,7 @@
             </div>
 
             <!-- Scrollable Country List ONLY -->
-            <div style="display: flex; flex-direction: column; gap: 6px; padding: 8px; overflow-y: auto; max-height: 300px; overflow-x: hidden;">
+            <div style="display: flex; flex-direction: column; gap: 6px; padding: 8px; overflow-y: auto; max-height: 300px; overflow-x: hidden; background: black;">
               <Button
                 v-for="(country, index) in filteredCountries"
                 :key="country.code"
@@ -104,19 +104,19 @@
                 :pt="{
                   root: {
                     class: [
-                      '!w-full !flex !items-center !text-left !rounded-[10px] !transition-all !duration-200 !justify-start !border-none !text-sm sm:!text-base',
+                      '!w-full !flex !items-center !text-left !rounded-none !transition-all !duration-200 !justify-start !border-none !text-base sm:!text-lg',
                       {
                         '!bg-[#60a5fa] !text-white !translate-x-[2px]': index === highlightedIndex,
                         '!bg-[#3b82f6] !text-white': selectedCountry && selectedCountry.code === country.code,
-                        '!bg-[#f1f5f9] !text-black hover:!bg-[#bfdbfe]': !(index === highlightedIndex || (selectedCountry && selectedCountry.code === country.code))
+                        '!bg-[#1a1a1a] !text-white hover:!bg-[#2a2a2a] hover:!text-white': !(index === highlightedIndex || (selectedCountry && selectedCountry.code === country.code))
                       }
                     ]
                   }
                 }"
-                style="padding: 8px 12px !important;"
+                style="padding: 10px 12px !important;"
               >
-                <span :class="`fi fi-${country.code.toLowerCase()}`" style="font-size: 14px; margin-right: 12px;"></span>
-                <span>{{ country.name }}</span>
+                <span :class="`fi fi-${country.code.toLowerCase()}`" style="font-size: 18px; margin-right: 12px;"></span>
+                <span style="font-size: 16px; color: white;">{{ country.name }}</span>
               </Button>
             </div>
           </div>
@@ -145,6 +145,7 @@
     </Dialog>
   </div>
 </template>
+
 
 <script setup>
 import { ref, nextTick } from "vue";
