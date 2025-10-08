@@ -1,4 +1,12 @@
+/* Import PrimeVue / PrimeIcons first */
 @import 'primeicons/primeicons.css';
+
+/* Then Tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
 
 /* Your custom styles here */
 body {
@@ -6,3 +14,21 @@ body {
     padding: 0;
     font-family: var(--font-family);
 }
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 10px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #0ea5e9;
+    border-radius: 10px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #3b82f6;
+  }
