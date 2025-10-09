@@ -1,12 +1,12 @@
 <template>
-  <div class="max-w-[1400px] mx-auto p-4 sm:p-6 md:p-8 min-h-screen" style="background: white !important;">
+  <div class="w-full max-w-[1400px] mx-auto px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10 min-h-screen" style="background: white !important;">
     <!-- Header -->
-    <header class="mb-6 sm:mb-8">
-      <h1 class="text-2xl sm:text-3xl font-semibold" style="color: #374151 !important;">Country Selector</h1>
+    <header class="mb-4 sm:mb-6 md:mb-8">
+      <h1 class="text-xl sm:text-2xl md:text-3xl font-semibold" style="color: #374151 !important;">Country Selector</h1>
     </header>
 
     <!-- Country Select -->
-    <div class="w-full max-w-full">
+    <div class="w-full relative">
       <Select
         :key="selectKey"
         v-model="selectedCountry"
@@ -22,33 +22,33 @@
         emptyMessage="Please enter 1 or more characters"
         :filterFocus="true"
         :pt="{
-          root: { 
-            class: '!w-full !bg-white !relative',
-            style: isDropdownOpen 
-              ? 'border: 1px solid #d1d5db !important; border-bottom: 1px solid #d1d5db !important; border-radius: 6px 6px 0 0 !important; background: white !important; z-index: 1001 !important; position: relative !important;'
-              : 'border: 1px solid #d1d5db !important; border-radius: 6px !important; background: white !important;'
+          root: {
+            class: '!w-full !bg-white',
+            style: isDropdownOpen
+              ? 'border: 1px solid #d1d5db !important; border-bottom: 1px solid #d1d5db !important; border-radius: 6px 6px 0 0 !important; background: white !important; position: relative !important;'
+              : 'border: 1px solid #d1d5db !important; border-radius: 6px !important; background: white !important; position: relative !important;'
           },
-          input: { 
-            class: '!py-2.5 !px-3 !text-sm',
+          input: {
+            class: '!py-2 !px-3 sm:!py-2.5 !text-xs sm:!text-sm',
             style: 'color: #374151 !important; background: white !important;'
           },
           inputFocus: {
             style: 'border-color: #3b82f6 !important; box-shadow: 0 0 0 1px #3b82f6 !important; outline: none !important;'
           },
-          trigger: { 
-            class: '!w-10',
+          trigger: {
+            class: '!w-8 sm:!w-10',
             style: 'color: #6b7280 !important; background: white !important;'
           },
           panel: {
             class: '!mt-0',
-            style: 'border: 1px solid #d1d5db !important; border-top: 1px solid #d1d5db !important; border-radius: 0 0 6px 6px !important; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important; background: white !important; z-index: 1000 !important; margin-top: -1px !important; position: absolute !important; top: 100% !important; left: 0 !important; right: 0 !important;'
+            style: 'border: 1px solid #d1d5db !important; border-top: 1px solid #d1d5db !important; border-radius: 0 0 6px 6px !important; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important; background: white !important; z-index: 1000 !important; margin-top: -1px !important; position: absolute !important; top: 100% !important; left: 0 !important; right: 0 !important; max-height: 400px !important; overflow-y: auto !important;'
           },
-          list: { 
+          list: {
             class: '!p-0',
             style: 'background: white !important;'
           },
           item: {
-            class: '!py-2.5 !px-4 !text-sm !border-b last:!border-b-0',
+            class: '!py-2 !px-3 sm:!py-2.5 sm:!px-4 !text-xs sm:!text-sm !border-b last:!border-b-0',
             style: 'color: #374151 !important; background: white !important; border-color: #f3f4f6 !important; border-radius: 0 !important;'
           },
           option: {
@@ -63,36 +63,36 @@
           itemSelected: {
             style: 'background: var(--p-primary-500) !important; color: white !important;'
           },
-          filterContainer: { 
-            class: '!p-3 !border-b',
+          filterContainer: {
+            class: '!p-2 sm:!p-3 !border-b',
             style: 'background: white !important; border-color: #e5e7eb !important;'
           },
-          filterInput: { 
-            class: '!w-full !py-2 !px-3 !text-sm',
+          filterInput: {
+            class: '!w-full !py-1.5 sm:!py-2 !px-2.5 sm:!px-3 !text-xs sm:!text-sm',
             style: 'border: 1px solid #d1d5db !important; border-radius: 6px !important; background: white !important; color: #374151 !important;'
           },
           filterInputFocus: {
             style: 'border-color: #3b82f6 !important; box-shadow: 0 0 0 1px #3b82f6 !important; outline: none !important;'
           },
-          emptyMessage: { 
-            class: '!py-3 !px-4 !text-sm',
+          emptyMessage: {
+            class: '!py-2 !px-3 sm:!py-3 sm:!px-4 !text-xs sm:!text-sm',
             style: 'color: #6b7280 !important; background: white !important;'
           }
         }"
       >
         <template #value="slotProps">
-          <div v-if="slotProps.value" class="flex items-center gap-3">
-            <span :class="`fi fi-${slotProps.value.code.toLowerCase()} text-base`"></span>
-            <div class="text-sm" style="color: #374151 !important;">{{ slotProps.value.name }}</div>
+          <div v-if="slotProps.value" class="flex items-center gap-2 sm:gap-3">
+            <span :class="`fi fi-${slotProps.value.code.toLowerCase()} text-sm sm:text-base`"></span>
+            <div class="text-xs sm:text-sm" style="color: #374151 !important;">{{ slotProps.value.name }}</div>
           </div>
-          <span v-else class="text-sm" style="color: #9ca3af !important;">
+          <span v-else class="text-xs sm:text-sm" style="color: #9ca3af !important;">
             {{ slotProps.placeholder }}
           </span>
         </template>
         <template #option="slotProps">
-          <div class="flex items-center gap-3" style="color: #374151 !important;">
-            <span :class="`fi fi-${slotProps.option.code.toLowerCase()} text-base`"></span>
-            <div class="text-sm" style="color: #374151 !important;">{{ slotProps.option.name }}</div>
+          <div class="flex items-center gap-2 sm:gap-3" style="color: #374151 !important;">
+            <span :class="`fi fi-${slotProps.option.code.toLowerCase()} text-sm sm:text-base`"></span>
+            <div class="text-xs sm:text-sm" style="color: #374151 !important;">{{ slotProps.option.name }}</div>
           </div>
         </template>
         <template #filtericon>
