@@ -2,18 +2,24 @@
   <div class="w-full max-w-[1400px] mx-auto px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10 min-h-screen" style="background: white !important;">
     <!-- Header -->
     <header class="mb-4 sm:mb-6 md:mb-8">
-      <h1 class="text-xl sm:text-2xl md:text-3xl font-semibold" style="color: #374151 !important;">Country Selector</h1>
+      <h1 class="text-xl sm:text-2xl md:text-3xl font-semibold" style="color: #374151 !important;">Ajax Remote Data Selector</h1>
     </header>
 
-    <!-- Country Select Component -->
-    <CountrySelector v-model="selectedCountry" />
+    <!-- Generic Selector Component -->
+    <GenericSelector
+      v-model="selectedCity"
+      api-url="https://fake-json-api.mock.beeceptor.com/companies"
+      placeholder="Search for a city"
+    />
+      
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
-import CountrySelector from "./CountrySelector.vue";
+import GenericSelector from "./GenericSelector.vue";
 
 // ============ Reactive State ============
-const selectedCountry = ref(null);
+console.log('App.vue loaded');
+const selectedCity = ref(null);
 </script>

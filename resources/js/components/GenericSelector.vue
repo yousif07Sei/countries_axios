@@ -7,7 +7,7 @@
       v-model="selectedCountry"
       :options="filteredCountries"
       filter
-      optionLabel="name"
+      :optionLabel="optionLabel"
       :placeholder="placeholder"
       @filter="searchCountries"
       @show="handleDropdownShow"
@@ -77,8 +77,8 @@
     >
       <template #value="slotProps">
         <div v-if="slotProps.value" class="flex items-center gap-2 sm:gap-3">
-          <span :class="`fi fi-${slotProps.value.code.toLowerCase()} text-sm sm:text-base`"></span>
-          <div class="text-xs sm:text-sm" style="color: #374151 !important;">{{ slotProps.value.name }}</div>
+          <span v-if="showIcon && slotProps.value[iconField]" :class="`fi fi-${slotProps.value[iconField].toLowerCase()} text-sm sm:text-base`"></span>
+          <div class="text-xs sm:text-sm" style="color: #374151 !important;">{{ slotProps.value[optionLabel] }}</div>
         </div>
         <span v-else class="text-xs sm:text-sm" style="color: #9ca3af !important;">
           {{ slotProps.placeholder }}
@@ -86,8 +86,8 @@
       </template>
       <template #option="slotProps">
         <div class="flex items-center gap-2 sm:gap-3" style="color: #374151 !important;">
-          <span :class="`fi fi-${slotProps.option.code.toLowerCase()} text-sm sm:text-base`"></span>
-          <div class="text-xs sm:text-sm" style="color: #374151 !important;">{{ slotProps.option.name }}</div>
+          <span v-if="showIcon && slotProps.option[iconField]" :class="`fi fi-${slotProps.option[iconField].toLowerCase()} text-sm sm:text-base`"></span>
+          <div class="text-xs sm:text-sm" style="color: #374151 !important;">{{ slotProps.option[optionLabel] }}</div>
         </div>
       </template>
       <template #filtericon>
@@ -104,6 +104,7 @@ import Select from "primevue/select";
 import Aura from '@primevue/themes/aura';
 import { definePreset } from '@primevue/themes';
 
+console.log('CountrySelector.vue loaded');  // 👈 Add this at the top
 // ============ Props ============
 const props = defineProps({
   modelValue: {
@@ -112,11 +113,23 @@ const props = defineProps({
   },
   placeholder: {
     type: String,
-    default: "Search for a country"
+    default: "Search..."
   },
   apiUrl: {
     type: String,
-    default: "/countries"
+    required: true
+  },
+  optionLabel: {
+    type: String,
+    default: "name"
+  },
+  showIcon: {
+    type: Boolean,
+    default: false
+  },
+  iconField: {
+    type: String,
+    default: "code"
   }
 });
 
@@ -144,16 +157,18 @@ watch(selectedCountry, (newValue) => {
 // ============ Fetch Countries ============
 const fetchCountries = async () => {
   try {
+    console.log('Fetching from:', props.apiUrl);  // 👈 Add this
     const response = await axios.get(props.apiUrl);
+    console.log('Data received:', response.data); 
     allCountries.value = response.data;
 
-    // Filter on frontend to match countries that START WITH the search query
+    // Filter on frontend to match items that START WITH the search query
     if (searchQuery.value && searchQuery.value.length > 0) {
-      filteredCountries.value = response.data.filter(country =>
-        country.name.toLowerCase().startsWith(searchQuery.value.toLowerCase())
+      filteredCountries.value = response.data.filter(item =>
+        item[props.optionLabel].toLowerCase().startsWith(searchQuery.value.toLowerCase())
       );
     } else {
-      // Don't show any countries if search is empty
+      // Don't show any items if search is empty
       filteredCountries.value = [];
     }
 

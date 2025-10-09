@@ -93,6 +93,75 @@ Route::get('/countries', function (Request $request) {
     // Return all countries if no search term
     return response()->json($allCountries);
 });
+Route::get('/cities', function (Request $request) {
+    $search = $request->input('search', '');
+    
+    // All countries
+    $allCities =  [
+    ['id' => 1, 'name' => 'New York'],
+    ['id' => 2, 'name' => 'Los Angeles'],
+    ['id' => 3, 'name' => 'London'],
+    ['id' => 4, 'name' => 'Paris'],
+    ['id' => 5, 'name' => 'Tokyo'],
+    ['id' => 6, 'name' => 'Dubai'],
+    ['id' => 7, 'name' => 'Singapore'],
+    ['id' => 8, 'name' => 'Hong Kong'],
+    ['id' => 9, 'name' => 'Sydney'],
+    ['id' => 10, 'name' => 'Toronto'],
+    ['id' => 11, 'name' => 'Chicago'],
+    ['id' => 12, 'name' => 'San Francisco'],
+    ['id' => 13, 'name' => 'Berlin'],
+    ['id' => 14, 'name' => 'Madrid'],
+    ['id' => 15, 'name' => 'Rome'],
+    ['id' => 16, 'name' => 'Barcelona'],
+    ['id' => 17, 'name' => 'Amsterdam'],
+    ['id' => 18, 'name' => 'Vienna'],
+    ['id' => 19, 'name' => 'Prague'],
+    ['id' => 20, 'name' => 'Budapest'],
+    ['id' => 21, 'name' => 'Moscow'],
+    ['id' => 22, 'name' => 'Istanbul'],
+    ['id' => 23, 'name' => 'Cairo'],
+    ['id' => 24, 'name' => 'Mumbai'],
+    ['id' => 25, 'name' => 'Delhi'],
+    ['id' => 26, 'name' => 'Shanghai'],
+    ['id' => 27, 'name' => 'Beijing'],
+    ['id' => 28, 'name' => 'Bangkok'],
+    ['id' => 29, 'name' => 'Seoul'],
+    ['id' => 30, 'name' => 'Kuala Lumpur'],
+    ['id' => 31, 'name' => 'Jakarta'],
+    ['id' => 32, 'name' => 'Manila'],
+    ['id' => 33, 'name' => 'Melbourne'],
+    ['id' => 34, 'name' => 'Brisbane'],
+    ['id' => 35, 'name' => 'Auckland'],
+    ['id' => 36, 'name' => 'Vancouver'],
+    ['id' => 37, 'name' => 'Montreal'],
+    ['id' => 38, 'name' => 'Mexico City'],
+    ['id' => 39, 'name' => 'São Paulo'],
+    ['id' => 40, 'name' => 'Rio de Janeiro'],
+    ['id' => 41, 'name' => 'Buenos Aires'],
+    ['id' => 42, 'name' => 'Lima'],
+    ['id' => 43, 'name' => 'Bogotá'],
+    ['id' => 44, 'name' => 'Santiago'],
+    ['id' => 45, 'name' => 'Johannesburg'],
+    ['id' => 46, 'name' => 'Cape Town'],
+    ['id' => 47, 'name' => 'Lagos'],
+    ['id' => 48, 'name' => 'Nairobi'],
+    ['id' => 49, 'name' => 'Athens'],
+    ['id' => 50, 'name' => 'Lisbon'],
+];
+      
+    
+    // Filter by search term
+    if (!empty($search)) {
+        $filtered = array_filter($allCities, function($citiy) use ($search) {
+            return stripos($citiy['name'], $search) !== false;
+        });
+        return response()->json(array_values($filtered));
+    }
+    
+    // Return all countries if no search term
+    return response()->json($allCities);
+});
 Route::get('/{any}', function () {
     return view('app');
 })->where('any', '.*');
